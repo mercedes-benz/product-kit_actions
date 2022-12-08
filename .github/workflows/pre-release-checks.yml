@@ -1,9 +1,12 @@
-name: Pre Release checks
+name: Pre Release Checks
 
 on:
   workflow_call:
     inputs:
       npm-package-url:
+        required: true
+        type: string
+      black-duck-project-name:
         required: true
         type: string
 
@@ -22,7 +25,7 @@ jobs:
       - id: check # This will be the reference for getting the outputs.
         uses: EndBug/version-check@v2 # You can choose the version/branch you prefer.
         with:
-          file-url: https://raw.githubusercontent.com/michaelgeyer/product-kit-github-actions-test/main/package.json
+          file-url: ${{ github.event.inputs.npm-package-url }}
           assume-same-version: old
       - name: Fail if unchanged  
         if: steps.check.outputs.changed == 'false'
@@ -47,10 +50,25 @@ jobs:
         with:
           version: v${{ steps.package-version.outputs.current-version}}
           validation_level: warn
-        if: ${{ steps.changelog_reader.outputs.version }} != ${{ steps.package-version.outputs.current-version}}
-      - uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            Update CHANGELOG.md is required!
-          pr_number: ${{ github.event.number }}
+
+  check-licenses:
+    needs: check-changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout develop branch
+        uses: actions/checkout@v3
+        with: 
+          ref: develop
+      - name: Get current version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main 
+      - name: Check 3rd party licenses file
+        run: |
+          if grep -q "${{ github.event.inputs.black-duck-project-name }} : ${{ steps.package-version.outputs.current-version}}" 3RD_PARTY_LICENSES.txt
+          then
+              echo "Version has been updated"
+          else
+              echo "Version must be updated"
+              exit 1
+          fi
       
