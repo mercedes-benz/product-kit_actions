@@ -1,5 +1,12 @@
 name: Pre Release checks
 
+on:
+  workflow_call:
+    inputs:
+      npm-package-url:
+        required: true
+        type: string
+
 jobs:
   check-version:
     runs-on: ubuntu-latest
