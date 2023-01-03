@@ -48,7 +48,7 @@ jobs:
         id: changelog-check
         uses: mindsers/changelog-reader-action@v2
         with:
-          version: v${{ steps.package-version.outputs.current-version}}
+          version: ${{ steps.package-version.outputs.current-version}}
           validation_level: warn
 
   check-licenses:
