@@ -25,7 +25,7 @@ jobs:
       - id: check # This will be the reference for getting the outputs.
         uses: EndBug/version-check@v2 # You can choose the version/branch you prefer.
         with:
-          file-url: ${{ github.event.inputs.npm-package-url }}
+          file-url: ${{ inputs.npm-package-url }}
           static-checking: localIsNew
       - name: Fail if no semantic change 
         if: steps.check.outputs.type == 'undefined'
@@ -64,7 +64,7 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@main 
       - name: Check 3rd party licenses file
         run: |
-          if grep -q "${{ github.event.inputs.black-duck-project-name }} : ${{ steps.package-version.outputs.current-version}}" 3RD_PARTY_LICENSES.txt
+          if grep -q "${{ inputs.black-duck-project-name }} : ${{ steps.package-version.outputs.current-version}}" 3RD_PARTY_LICENSES.txt
           then
               echo "Version has been updated"
           else
