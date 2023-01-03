@@ -26,7 +26,7 @@ jobs:
         uses: EndBug/version-check@v2 # You can choose the version/branch you prefer.
         with:
           file-url: ${{ github.event.inputs.npm-package-url }}
-          assume-same-version: old
+          static-checking: localIsNew
       - name: Fail if no semantic change 
         if: steps.check.outputs.type == 'undefined'
         run: |
