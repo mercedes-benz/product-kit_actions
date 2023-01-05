@@ -1,0 +1,44 @@
+name: Post Release Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  npm-publish:
+    name: npm-publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install npm
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - run: npm ci
+      - name: 👑 Publish npm package
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.MBTI_NPM_TOKEN}}
+  create-release:
+    name: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get new version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: v${{ steps.package-version.outputs.current-version}}
+          release_name: Release v${{ steps.package-version.outputs.current-version}}
+          body: |
+            See CHANGELOG file to see what's changed in new release.
+          draft: false
+          prerelease: false
