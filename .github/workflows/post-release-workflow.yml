@@ -1,9 +1,6 @@
 name: Post Release Workflow
 
-on:
-  push:
-    branches:
-      - main
+on: workflow_call
 
 jobs:
   npm-publish:
