@@ -28,7 +28,7 @@ jobs:
           file-url: ${{ inputs.npm-package-url }}
           static-checking: localIsNew
       - name: Fail if no semantic change 
-        if: steps.check.outputs.type == 'undefined' || steps.check.outputs.type == 'false'
+        if: steps.check.outputs.type == 'undefined' || steps.check.outputs.changed == 'false'
         run: |
           echo "No version change :/"'
           exit: 1
