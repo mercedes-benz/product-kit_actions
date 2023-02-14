@@ -2,10 +2,9 @@ name: Post Release Workflow
 
 on:
   workflow_call:
-    inputs:
+    secrets:
       npm-token:
         required: true
-        type: string
 
 jobs:
   npm-publish:
@@ -23,7 +22,7 @@ jobs:
       - name: 👑 Publish npm package
         run: npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
   create-release:
     name: create-release
     runs-on: ubuntu-latest
